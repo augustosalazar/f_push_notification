@@ -11,17 +11,67 @@ class HomePage extends StatelessWidget {
     final NotificationController nc = Get.find();
     return Scaffold(
       appBar: AppBar(title: Text('Ping Counter')),
-      body: Center(
-        child: Obx(
-          () => Text(
-            'Counter: ${nc.count.value}',
-            style: TextStyle(fontSize: 32),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Obx(
+            () => Text(
+              'Activity: ${nc.activityActive.value ? "Active" : "Inactive"}',
+              style: TextStyle(fontSize: 32),
+            ),
           ),
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: nc.sendPingHttp,
-        child: Icon(Icons.send),
+          SizedBox(height: 20),
+          Obx(
+            () => Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: ElevatedButton(
+                      onPressed: () async => await nc.registerActivityUpdate(),
+                      child: nc.subscribeToActivityUpdate.value
+                          ? Text('Unsubscribe Activity Update')
+                          : Text('Subscribe Activity Update'),
+                    ),
+                  ),
+                  Spacer(),
+                  Expanded(
+                    flex: 2,
+                    child: ElevatedButton(
+                      onPressed: nc.registerActivityLocationRequest,
+                      child: nc.subscribeToActivityLocationRequest.value
+                          ? Text('Unsubscribe Activity Location Req.')
+                          : Text('Subscribe Activity Location Req.'),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          SizedBox(height: 20),
+          Obx(
+            () => Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: nc.startStopActivity,
+                  child: nc.activityActive.value
+                      ? Text('Stop Activity')
+                      : Text('Start Activity'),
+                ),
+
+                SizedBox(width: 10),
+                ElevatedButton(
+                  onPressed: nc.requestLocation,
+                  child: Text('Request Location'),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
